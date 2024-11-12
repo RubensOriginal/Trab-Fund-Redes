@@ -78,6 +78,9 @@ public class Roteamento {
         for (String valor : tabela) {
             String[] split = valor.split(":");
 
+            if (split[0].equals(Main.localIp))
+                continue;
+
             List<TabelaRoteamento> roteamento = tabelaRoteamento.stream().filter(e -> e.getIp().equals(split[0])).toList();
 
             if (roteamento.size() == 0) {
@@ -87,10 +90,12 @@ public class Roteamento {
             } else {
                 TabelaRoteamento roteador = roteamento.get(0);
 
-                if (roteador.getMetrica() + 1 > Integer.parseInt(split[1])) {
+                if (roteador.getMetrica() > Integer.parseInt(split[1]) + 1) {
                     roteador.set(split[0], Integer.parseInt(split[1]) + 1, origem);
                     modificou = true;
                 }
+
+                if (roteador.getSaida().equals(origem))
 
                 roteador.resetTTL();
             }
