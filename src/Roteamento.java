@@ -68,8 +68,12 @@ public class Roteamento {
 
         String[] tabela = mensagem.substring(1, mensagem.length()).split("!");
 
-        TabelaRoteamento roteadorOrigem = tabelaRoteamento.stream().filter(e -> e.getIp() == origem).toList().getFirst();
-        roteadorOrigem.resetTTL();
+        List<TabelaRoteamento> roteadores = tabelaRoteamento.stream().filter(e -> e.getIp() == origem).toList();
+        if (roteadores.size() == 1) {
+            roteadores.get(0).resetTTL();
+        } else {
+            tabelaRoteamento.add(new TabelaRoteamento(origem, 1, origem));
+        }
 
         for (String valor : tabela) {
             String[] split = valor.split(":");
