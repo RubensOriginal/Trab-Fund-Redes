@@ -26,7 +26,9 @@ public class Main {
             startRoteamento(roteamento);
             startRecebimento(socket);
             while(true) {
-                Thread.sleep(1000);
+                String mensagem = sc.next();
+
+                roteamento.enviaMensagem(mensagem);
             }
 
         } catch (Exception e) {
@@ -43,9 +45,11 @@ public class Main {
                     roteamento.modificaRoteamento(pacote.ip, pacote.mensagem);
                 } else if (pacote.mensagem.startsWith("@")) {
                     roteamento.adicionaRoteadorVizinho(pacote.mensagem);
+                } else if (pacote.mensagem.startsWith("&")) {
+                    roteamento.roteiaMensagem(pacote.mensagem);
                 }
             } catch (IOException e) {
-
+                System.out.println("Ocorreu um erro ao receber uma mensagem.");
             }
         }
     }
@@ -58,7 +62,8 @@ public class Main {
                 try {
                     roteamento.gerenciaRoteamento();
                 } catch (Exception e) {
-
+                    System.out.println("Ocorreu um erro ao executar a thread T1.");
+                    System.out.println(e);
                 }
             }
 

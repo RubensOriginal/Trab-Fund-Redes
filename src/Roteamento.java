@@ -30,6 +30,39 @@ public class Roteamento {
         }
     }
 
+    public void roteiaMensagem(String mensagem) {
+
+        String[] retorno = mensagem.split("%");
+
+        if (retorno[1].equals(Main.localIp)) {
+            System.out.printf("----\nMensagem chegou ao Destino:\nIP Origem: %s\nIP Destino: %s\nMensagem: %s\n----", retorno[0], retorno[1], retorno[2]);
+            // Mensagem para esse roteador
+        } else {
+            // Mensagem para outro roteador
+            System.out.printf("----\nRepassando a mensagem:\nIP Origem: %s\nIP Destino: %s\nMensagem: %s\n----", retorno[0], retorno[1], retorno[2]);
+            TabelaRoteamento roteador = tabelaRoteamento.stream().filter(e -> e.getIp() == retorno[1]).toList().getFirst();
+            try {
+                socket.enviar(mensagem, roteador.getSaida());
+            } catch (Exception e1) {
+                System.out.println("Ocorreu um erro ao repassar a mensagem.");
+            }
+        }
+
+    }
+
+    public void enviaMensagem(String mensagem) {
+        String[] partes = mensagem.split("|");
+
+        TabelaRoteamento roteador = tabelaRoteamento.stream().filter(e -> e.getIp() == partes[0]).toList().getFirst();
+
+        try {
+            socket.enviar("&" + Main.localIp + "%" + partes[0] + "%" + partes[1], roteador.getIp());
+            System.out.println("Mensagem enviada.");
+        } catch (Exception e1) {
+            System.out.println("Não foi possível enviar a mensagem.");
+        }
+    }
+
     public void modificaRoteamento(String origem, String mensagem) {
         boolean modificou = false;
 
@@ -52,7 +85,6 @@ public class Roteamento {
                     modificou = true;
                 }
             }
-
         }
 
         if (modificou) {
@@ -83,9 +115,10 @@ public class Roteamento {
             for (TabelaRoteamento rota : tabelaRoteamento) {
                 if (rota.decreaseTTL()) {
                     System.out.println("Removeu a rota " + rota.toString());
-                    tabelaRoteamento.remove(rota);
                 }
             }
+
+            tabelaRoteamento.removeIf(e -> e.getTTL() <= 0);
          
             if (timer >= 15) {
                 propagaRoteamento();
