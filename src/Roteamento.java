@@ -68,6 +68,9 @@ public class Roteamento {
 
         String[] tabela = mensagem.substring(1, mensagem.length()).split("!");
 
+        TabelaRoteamento roteadorOrigem = tabelaRoteamento.stream().filter(e -> e.getIp() == origem).toList().getFirst();
+        roteadorOrigem.resetTTL();
+
         for (String valor : tabela) {
             String[] split = valor.split(":");
 
@@ -84,6 +87,8 @@ public class Roteamento {
                     roteador.set(split[0], Integer.parseInt(split[1]) + 1, origem);
                     modificou = true;
                 }
+
+                roteador.resetTTL();
             }
         }
 

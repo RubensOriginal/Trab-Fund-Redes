@@ -36,7 +36,9 @@ public class SocketUDP{
 
         String mensagem = new String(pacote.getData(), 0, pacote.getLength());
 
-        return new Pacote(pacote.getAddress().toString(), mensagem); 
+        String ip = pacote.getAddress().toString();
+
+        return new Pacote(ip.substring(1), mensagem); 
     }
 
     //fecha o socket

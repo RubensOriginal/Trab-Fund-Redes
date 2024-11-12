@@ -38,6 +38,10 @@ public class TabelaRoteamento {
         return ttl;
     }
 
+    public void resetTTL() {
+        ttl = 35;
+    }
+
     @Override
     public String toString() {
         return "TabelaRoteamento [ip=" + ip + ", metrica=" + metrica + ", saida=" + saida + ", ttl=" + ttl + "]";
