@@ -30,6 +30,14 @@ public class TabelaRoteamento {
         return metrica;
     }
 
+    public String getSaida() {
+        return saida;
+    }
+
+    public int getTTL() {
+        return ttl;
+    }
+
     @Override
     public String toString() {
         return "TabelaRoteamento [ip=" + ip + ", metrica=" + metrica + ", saida=" + saida + ", ttl=" + ttl + "]";

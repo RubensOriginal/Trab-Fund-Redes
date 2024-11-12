@@ -30,10 +30,10 @@ public class Roteamento {
         }
     }
 
-    public void modificaRoteamento(String origem, String menssagem) {
+    public void modificaRoteamento(String origem, String mensagem) {
         boolean modificou = false;
 
-        String[] tabela = menssagem.substring(1, menssagem.length()).split("!");
+        String[] tabela = mensagem.substring(1, mensagem.length()).split("!");
 
         for (String valor : tabela) {
             String[] split = valor.split(":");
@@ -42,6 +42,7 @@ public class Roteamento {
 
             if (roteamento.size() == 0) {
                 tabelaRoteamento.add(new TabelaRoteamento(split[0], Integer.parseInt(split[1]) + 1, origem));
+                System.out.println("Adiciona: " + split[0] + " - Métrica " + (Integer.parseInt(split[1]) + 1) + " - Saída " + origem);
                 modificou = true;
             } else {
                 TabelaRoteamento roteador = roteamento.get(0);
@@ -58,6 +59,23 @@ public class Roteamento {
             propagaRoteamento();
         }
 
+    }
+
+    public void adicionaRoteadorVizinho(String mensagem) {
+        boolean modificou = false;
+
+        String vizinho = mensagem.substring(1, mensagem.length());
+
+        List<TabelaRoteamento> roteamento = tabelaRoteamento.stream().filter(e -> e.getIp() == vizinho).toList();
+
+        if (roteamento.size() == 0) {
+            System.out.println("Adiciona vizinho: " + vizinho + " - Métrica " + 1);
+            tabelaRoteamento.add(new TabelaRoteamento(vizinho, 1, vizinho));
+            modificou = true;
+        }
+
+        if (modificou)
+            propagaRoteamento();
     }
 
     public void gerenciaRoteamento() throws InterruptedException {
@@ -80,6 +98,7 @@ public class Roteamento {
 
     public void propagaRoteamento() {
         System.out.println("Propaga Tabela");
+        printTabelaRoteamento();
     
         List<TabelaRoteamento> vizinhos = tabelaRoteamento.stream().filter(e -> e.getMetrica() == 1).toList();
 
@@ -96,5 +115,12 @@ public class Roteamento {
         }
 
         timer = 0;
+    }
+
+    private void printTabelaRoteamento() {
+        System.out.println("-----------------------------------------------------");
+        System.out.println("| IP              | Métrica | Saída           | TTL |");
+        tabelaRoteamento.forEach(e -> System.out.printf("| %15s | %7s | %15s | %3s |\n", e.getIp(), e.getMetrica(), e.getSaida(), e.getTTL()));
+        System.out.println("-----------------------------------------------------");
     }
 }

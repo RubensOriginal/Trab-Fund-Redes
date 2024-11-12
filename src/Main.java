@@ -3,8 +3,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
-import SocketUDP.Pacote;
-
 public class Main {
 
     private static List<TabelaRoteamento> tabelaRoteamento = new ArrayList<>();
@@ -23,13 +21,16 @@ public class Main {
         try {
 
             socket = new SocketUDP(19000);
-            roteamento = new Roteamento(tabelaRoteamento, localIp, socket, redeExiste);
+            roteamento = new Roteamento(tabelaRoteamento, "./Roteamento.txt", socket, redeExiste);
 
             startRoteamento(roteamento);
             startRecebimento(socket);
+            while(true) {
+                Thread.sleep(1000);
+            }
 
         } catch (Exception e) {
-
+            System.out.println(e);
         }
     }
 
@@ -38,8 +39,10 @@ public class Main {
             try {
                 SocketUDP.Pacote pacote = socket.receber();
 
-                if (mensagem.startsWith("!")) {
-                    roteamento.modificaRoteamento(mensagem, mensagem);
+                if (pacote.mensagem.startsWith("!")) {
+                    roteamento.modificaRoteamento(pacote.ip, pacote.mensagem);
+                } else if (pacote.mensagem.startsWith("@")) {
+                    roteamento.adicionaRoteadorVizinho(pacote.mensagem);
                 }
             } catch (IOException e) {
 
@@ -72,5 +75,7 @@ public class Main {
                 gerenciaMensagem(socket);
             }
         });
+    
+        t2.start();
     }
 }
