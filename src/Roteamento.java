@@ -51,15 +51,21 @@ public class Roteamento {
     }
 
     public void enviaMensagem(String mensagem) {
-        String[] partes = mensagem.split("|");
+        String[] partes = mensagem.split("/");
 
-        TabelaRoteamento roteador = tabelaRoteamento.stream().filter(e -> e.getIp() == partes[0]).toList().getFirst();
+        List<TabelaRoteamento> roteadores = tabelaRoteamento.stream().filter(e -> e.getIp().equals(partes[0])).toList();
 
-        try {
-            socket.enviar("&" + Main.localIp + "%" + partes[0] + "%" + partes[1], roteador.getIp());
-            System.out.println("Mensagem enviada.");
-        } catch (Exception e1) {
-            System.out.println("Não foi possível enviar a mensagem.");
+        System.out.println(roteadores.size());
+
+        if (roteadores.size() > 0) {
+
+            TabelaRoteamento roteador = roteadores.get(0);
+            try {
+                socket.enviar("&" + Main.localIp + "%" + partes[0] + "%" + partes[1], roteador.getIp());
+                System.out.println("Mensagem enviada.");
+            } catch (Exception e1) {
+                System.out.println("Não foi possível enviar a mensagem.");
+            }
         }
     }
 
