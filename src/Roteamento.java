@@ -2,6 +2,7 @@ import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 public class Roteamento {
@@ -87,6 +88,11 @@ public class Roteamento {
             if (split[0].equals(Main.localIp))
                 continue;
 
+            if (split[1].length() > 3) {
+                System.out.println("Valor inválido: " + valor);
+                continue;
+            }
+
             List<TabelaRoteamento> roteamento = tabelaRoteamento.stream().filter(e -> e.getIp().equals(split[0])).toList();
 
             if (roteamento.size() == 0) {
@@ -124,6 +130,10 @@ public class Roteamento {
             System.out.println("Adiciona vizinho: " + vizinho + " - Métrica " + 1);
             tabelaRoteamento.add(new TabelaRoteamento(vizinho, 1, vizinho));
             modificou = true;
+        } else {
+            TabelaRoteamento roteador = roteamento.get(0);
+
+            roteador.set(vizinho, 1, vizinho);
         }
 
         if (modificou)
@@ -132,14 +142,32 @@ public class Roteamento {
 
     public void gerenciaRoteamento() throws InterruptedException {
         while(true) {
+
+            List<String> removidos = new ArrayList<>();
+
             for (TabelaRoteamento rota : tabelaRoteamento) {
                 if (rota.decreaseTTL()) {
                     System.out.println("Removeu a rota " + rota.toString());
                 }
             }
 
-            tabelaRoteamento.removeIf(e -> e.getTTL() <= 0);
-         
+            for (int i = 0; i < tabelaRoteamento.size(); i++) {
+                if (tabelaRoteamento.get(i).getTTL() <= 0) {
+                    removidos.add(tabelaRoteamento.get(i).getIp());
+                    tabelaRoteamento.remove(i);
+                    i--;
+                }
+            }
+            
+            for (int i = 0; i < tabelaRoteamento.size(); i++) {
+                for (String removido : removidos) {
+                    if (tabelaRoteamento.get(i).getSaida().equals(removido)) {
+                        tabelaRoteamento.remove(i);
+                        i--;
+                    }
+                }
+            }
+            
             if (timer >= 15) {
                 propagaRoteamento();
             } else {
