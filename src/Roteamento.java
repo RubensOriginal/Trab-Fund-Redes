@@ -81,7 +81,11 @@ public class Roteamento {
 
         List<TabelaRoteamento> roteadores = tabelaRoteamento.stream().filter(e -> e.getIp().equals(origem)).toList();
         if (roteadores.size() == 1) {
-            roteadores.get(0).resetTTL();
+            TabelaRoteamento roteador = roteadores.get(0);
+            if (roteador.getMetrica() == 1)
+                roteador.resetTTL();
+            else
+                roteador.set(origem, 1, origem);
         } else {
             tabelaRoteamento.add(new TabelaRoteamento(origem, 1, origem));
         }
