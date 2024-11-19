@@ -18,6 +18,7 @@ public class Main {
 
         System.out.println("A rede já existe? [0 = Não, 1 = Sim]");
         boolean redeExiste = sc.next().equals("1") ? true : false;
+        System.out.println(redeExiste);
         try {
 
             socket = new SocketUDP(19000);

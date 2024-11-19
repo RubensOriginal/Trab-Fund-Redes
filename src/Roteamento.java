@@ -66,7 +66,7 @@ public class Roteamento {
 
             TabelaRoteamento roteador = roteadores.get(0);
             try {
-                socket.enviar("&" + Main.localIp + "%" + partes[0] + "%" + partes[1], roteador.getIp());
+                socket.enviar("&" + Main.localIp + "%" + partes[0] + "%" + partes[1], roteador.getSaida());
                 System.out.println("Mensagem enviada.");
             } catch (Exception e1) {
                 System.out.println("Não foi possível enviar a mensagem.");
