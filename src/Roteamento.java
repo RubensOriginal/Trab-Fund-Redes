@@ -41,11 +41,15 @@ public class Roteamento {
         } else {
             // Mensagem para outro roteador
             System.out.printf("----\nRepassando a mensagem:\nIP Origem: %s\nIP Destino: %s\nMensagem: %s\n----", retorno[0], retorno[1], retorno[2]);
-            TabelaRoteamento roteador = tabelaRoteamento.stream().filter(e -> e.getIp() == retorno[1]).toList().getFirst();
-            try {
-                socket.enviar(mensagem, roteador.getSaida());
-            } catch (Exception e1) {
-                System.out.println("Ocorreu um erro ao repassar a mensagem.");
+            List<TabelaRoteamento> roteadorList = tabelaRoteamento.stream().filter(e -> e.getIp() == retorno[1]).toList();
+
+            if (roteadorList.size() > 0) {
+                TabelaRoteamento roteador = roteadorList.get(0);
+                try {
+                    socket.enviar(mensagem, roteador.getSaida());
+                } catch (Exception e1) {
+                    System.out.println("Ocorreu um erro ao repassar a mensagem.");
+                }
             }
         }
 
