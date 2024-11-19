@@ -1,11 +1,11 @@
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 public class Main {
 
-    private static List<TabelaRoteamento> tabelaRoteamento = new ArrayList<>();
+    private static List<TabelaRoteamento> tabelaRoteamento = new CopyOnWriteArrayList<>();
     public static String localIp;
     public static SocketUDP socket;
     public static Roteamento roteamento;
