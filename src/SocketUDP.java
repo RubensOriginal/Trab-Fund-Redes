@@ -25,6 +25,9 @@ public class SocketUDP{
         byte[] buffer = mensagem.getBytes();
         InetAddress ip = InetAddress.getByName(ipDestino);
         DatagramPacket pacote = new DatagramPacket(buffer, buffer.length, ip, porta);
+
+        System.out.printf("Enviando o pacote: %s | %s\n", ipDestino, mensagem);
+
         socket.send(pacote);
     }
 
@@ -37,6 +40,8 @@ public class SocketUDP{
         String mensagem = new String(pacote.getData(), 0, pacote.getLength());
 
         String ip = pacote.getAddress().toString();
+
+        System.out.printf("Recebendo o pacote: %s | %s\n", ip, mensagem);
 
         return new Pacote(ip.substring(1), mensagem); 
     }

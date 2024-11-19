@@ -17,7 +17,7 @@ public class Main {
         localIp = sc.next();
 
         System.out.println("A rede já existe? [0 = Não, 1 = Sim]");
-        boolean redeExiste = sc.next() == "1" ? true : false;
+        boolean redeExiste = sc.next().equals("1") ? true : false;
         try {
 
             socket = new SocketUDP(19000);
